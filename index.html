@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8 ">
+    <meta http-equiv="X-UA-Compatible " content="IE=edge ">
+    <meta name="viewport " content="width=device-width, initial-scale=1 ">
+    <meta name="description " content="Learning to Act from Actionless Videos through Dense Correspondences ">
+
+    <title>Learning to Act from Actionless Videos through Dense Correspondences</title>
+    <!-- Bootstrap core CSS -->
+    <!--link href="bootstrap.min.css " rel="stylesheet "-->
+    <link rel="stylesheet " href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css " integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm " crossorigin="anonymous ">
+    <link rel="stylesheet " type="text/css " href="slick/slick.css" />
+    <link rel="stylesheet " type="text/css " href="slick/slick-theme.css" />
+    <!-- Custom styles for this template -->
+    <link href="offcanvas.css " rel="stylesheet ">
+    <!--    <link rel="icon " href="img/favicon.gif " type="image/gif ">-->
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid ">
+        <div class="container "></div>
+        <h2>Learning to Act from Actionless Video<br> through Dense Correspondences</h2>
+        <p><br /></p>
+        <div class="authors ">
+            Anonymous Authors
+        </div>
+    </div>
+
+    <div class="container ">
+        <div class="section ">
+            <!-- <div class="row-align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <div class="overlay ">
+                        <p>
+                            <a href="flow_diffusion_iclr2024.pdf ">paper</a>
+                        </p>
+                    </div>
+                </div>
+            </div> -->
+            <p>
+                In this work, we present an approach to construct a video-based robot policy capable of successfully executing diverse tasks across different robots and environments without the need of any action annotations. Our method leverages images as a task-agnostic
+                representation, encoding both the state and action information. By synthesizing videos that "hallucinate " robot executing actions and in combination with dense correspondences between frames, our approach can infer the closed-formed action
+                to execute to an environment without the need of any explicit action labels. This unique capability allows us to train the policy solely based on RGB videos and deploy learned policies to various robotic tasks. We demonstrate the efficacy
+                of our approach in learning policies on table-top manipulation and navigation tasks. Additionally, we contribute an open-source framework for efficient video modeling, enabling the training of high-fidelity policy models using just 4 GPUs
+                within a single day.
+            </p>
+
+            <p><br /></p>
+        </div>
+
+        <div class="section ">
+            <h2>Table of contents</h2>
+            <hr>
+            <ul>
+                <li><a href="#framework">Framework Overview</a></li>
+                <li><a href="#vidgenresults">Extended Qualitative Results</a>
+                    <ul>
+                        <li><a href="#mwresults">Meta-World</a></li>
+                        <li><a href="#ithorresults">iTHOR</a></li>
+                        <li><a href="#realresults">Real-World Franka Emika Panda Arm with Bridge Dataset”</a></li>
+                        <li><a href="#oodresults">Cross-Embodiment Learning (State Pusher)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#bridge0shot">Zero-Shot Generalization On Real-World Scene of Bridge Model</a></li>
+                <li><a href="#vidgencomparison">Comparison of First-Frame Conditioning Strategy and Different Text Encoders</a></li>
+                <li><a href="#DDIMresults">Improving Inference Efficiency with Denoising Diffusion Implicit Models</a></li>
+            </ul>
+            <p><br /></p>
+        </div>
+
+
+        <div class="section" id="framework">
+            <h2>Framework Overview</h2>
+            <hr>
+            <ul>
+                <li>(a) Our model takes the RGBD observation of the current environmental state and a textual goal description as its input.</li>
+                <li>(b) It first synthesizes a video of imagined execution of the task using a diffusion model.</li>
+                <li>(c) Next, it estimates the optical flow between adjacent frames in the video.</li>
+                <li>(d) Finally, it leverages the optical flow as dense correspondences between frames and the depth of the first frame to compute SE(3) transformations of the target object, and subsequently, robot arm commands.</li>
+            </ul>
+            <!-- <p>
+                For more details, please refer to our <a href="flow_diffusion_iclr2024.pdf ">paper</a>.
+            </p> -->
+            <!-- <p>
+                For more details, please refer to our main paper.
+            </p> -->
+            <div class="row align-items-center ">
+                <img src="img/framework.png " width="100% ">
+            </div>
+            <p><br /></p>
+        </div>
+
+        <div class="section ">
+            <a id="vidgenresults"></a>
+            <h2>Extended Qualitative Results</h2>
+            <hr>
+            <a id="mwresults"></a>
+            <div class="text-center ">
+                <h3>Meta-World</h3>
+            </div>
+            <hr width="75%">
+            <p>
+                Below, we provide some examples of generated videos and executions of our Meta-World experiments. The agent is required to execute a variety of manipulation tasks.
+            </p>
+            <div class="text-center ">
+                <h4>Synthesized Videos</h4>
+            </div>
+            <div class="container">
+                <div class="carousel4">
+                    <div><img src="img/MW_generation/0000.gif "></div>
+                    <div><img src="img/MW_generation/0001.gif "></div>
+                    <div><img src="img/MW_generation/0002.gif "></div>
+                    <div><img src="img/MW_generation/0003.gif "></div>
+                    <div><img src="img/MW_generation/0004.gif "></div>
+                    <div><img src="img/MW_generation/0005.gif "></div>
+                    <div><img src="img/MW_generation/0006.gif "></div>
+                    <div><img src="img/MW_generation/0007.gif "></div>
+                    <div><img src="img/MW_generation/0008.gif "></div>
+                    <div><img src="img/MW_generation/0009.gif "></div>
+                    <div><img src="img/MW_generation/0010.gif "></div>
+                    <div><img src="img/MW_generation/0011.gif "></div>
+                    <div><img src="img/MW_generation/0012.gif "></div>
+                    <div><img src="img/MW_generation/0013.gif "></div>
+                    <div><img src="img/MW_generation/0014.gif "></div>
+                    <div><img src="img/MW_generation/0015.gif "></div>
+                    <div><img src="img/MW_generation/0016.gif "></div>
+                    <div><img src="img/MW_generation/0017.gif "></div>
+                    <div><img src="img/MW_generation/0018.gif "></div>
+                    <div><img src="img/MW_generation/0019.gif "></div>
+                    <div><img src="img/MW_generation/0020.gif "></div>
+                    <div><img src="img/MW_generation/0021.gif "></div>
+                    <div><img src="img/MW_generation/0022.gif "></div>
+                    <div><img src="img/MW_generation/0023.gif "></div>
+                    <div><img src="img/MW_generation/0024.gif "></div>
+                    <div><img src="img/MW_generation/0025.gif "></div>
+                    <div><img src="img/MW_generation/0026.gif "></div>
+                    <div><img src="img/MW_generation/0027.gif "></div>
+                    <div><img src="img/MW_generation/0028.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="text-center ">
+                <h4>Robot Executions</h4>
+            </div>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/assembly/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Assembly</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/door-open/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Door Open</div>
+                    </div>
+                </div>
+                <!-- </div>
+            <p><br /></p>
+            <div class="row align-items-center "> -->
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/hammer/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Hammer</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/shelf-place/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Shelf Place</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+
+
+            <a id="ithorresults"></a>
+            <div class="text-center ">
+                <h3>iTHOR</h3>
+            </div>
+            <hr width="75%">
+            <p>
+                Below, we provide some examples of generated videos and executions of our iTHOR experiments. The agent is required to find and move to a specific target object in the scene.
+            </p>
+            <div class="text-center ">
+                <h4>Synthesized Videos</h4>
+            </div>
+            <div class="container">
+                <div class="carousel5">
+                    <div><img src="img/iTHOR_generation/0000.gif "></div>
+                    <div><img src="img/iTHOR_generation/0001.gif "></div>
+                    <div><img src="img/iTHOR_generation/0002.gif "></div>
+                    <div><img src="img/iTHOR_generation/0003.gif "></div>
+                    <div><img src="img/iTHOR_generation/0004.gif "></div>
+                    <div><img src="img/iTHOR_generation/0005.gif "></div>
+                    <div><img src="img/iTHOR_generation/0006.gif "></div>
+                    <div><img src="img/iTHOR_generation/0007.gif "></div>
+                    <div><img src="img/iTHOR_generation/0008.gif "></div>
+                    <div><img src="img/iTHOR_generation/0009.gif "></div>
+                    <div><img src="img/iTHOR_generation/0010.gif "></div>
+                    <div><img src="img/iTHOR_generation/0011.gif "></div>
+                    <div><img src="img/iTHOR_generation/0012.gif "></div>
+                    <div><img src="img/iTHOR_generation/0013.gif "></div>
+                    <div><img src="img/iTHOR_generation/0014.gif "></div>
+                    <div><img src="img/iTHOR_generation/0015.gif "></div>
+                    <div><img src="img/iTHOR_generation/0016.gif "></div>
+                    <div><img src="img/iTHOR_generation/0017.gif "></div>
+                    <div><img src="img/iTHOR_generation/0018.gif "></div>
+                    <div><img src="img/iTHOR_generation/0019.gif "></div>
+                    <div><img src="img/iTHOR_generation/0020.gif "></div>
+                    <div><img src="img/iTHOR_generation/0021.gif "></div>
+                    <div><img src="img/iTHOR_generation/0022.gif "></div>
+                    <div><img src="img/iTHOR_generation/0023.gif "></div>
+                    <div><img src="img/iTHOR_generation/0024.gif "></div>
+                    <div><img src="img/iTHOR_generation/0025.gif "></div>
+                    <div><img src="img/iTHOR_generation/0026.gif "></div>
+                    <div><img src="img/iTHOR_generation/0027.gif "></div>
+                    <div><img src="img/iTHOR_generation/0028.gif "></div>
+                    <div><img src="img/iTHOR_generation/0029.gif "></div>
+                    <div><img src="img/iTHOR_generation/0030.gif "></div>
+                    <div><img src="img/iTHOR_generation/0031.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="text-center ">
+                <h4>Robot Executions</h4>
+            </div>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Pillow/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Pillow</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/SoapBar/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Soap Bar</div>
+                    </div>
+                </div>
+                <!-- </div>
+            <p><br /></p>
+            <div class="row align-items-center "> -->
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Television/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Television</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Toaster/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Toaster</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+
+            <a id="oodresults"></a>
+            <div class="text-center ">
+                <h3>Cross-Embodiment Learning (State Pusher)</h3>
+            </div>
+            <hr width="75%">
+            <p>
+                Below, we provide some examples of executions of our Cross-Embodiment experiments. The agent is trained on human pushing video and tested in simulation.
+            </p>
+            <div class="container">
+                <div class="right">
+                    <div class="text-center">
+                        <h4>Failed executions</h4>
+                        <p><br /></p>
+                    </div>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                </div>
+                <div class="left">
+                    <div class="text-center">
+                        <h4>Successful executions</h4>
+                        <p><br /></p>
+                    </div>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                </div>
+                <div class="bottom">
+                    <p><br /></p>
+                </div>
+            </div>
+
+            <a id="realresults"></a>
+            <div class="text-center ">
+                <h3>Real-World Franka Emika Panda Arm with Bridge Dataset”</h3>
+            </div>
+            <hr width="75%">
+            <p>
+                Below, we provide some examples of generated video trained on Bridge data and executions of our real-world experiments with the model file-tuned on human videos. The agent is required to execute pick-and-place task on different objects and targets.
+            </p>
+            <div class="text-center ">
+                <h4>Synthesized Videos</h4>
+            </div>
+            <div class="container">
+                <div class="carousel5">
+                    <div><img src="img/Bridge_generation/0000.gif "></div>
+                    <div><img src="img/Bridge_generation/0001.gif "></div>
+                    <div><img src="img/Bridge_generation/0002.gif "></div>
+                    <div><img src="img/Bridge_generation/0003.gif "></div>
+                    <div><img src="img/Bridge_generation/0004.gif "></div>
+                    <div><img src="img/Bridge_generation/0005.gif "></div>
+                    <div><img src="img/Bridge_generation/0006.gif "></div>
+                    <div><img src="img/Bridge_generation/0007.gif "></div>
+                    <div><img src="img/Bridge_generation/0008.gif "></div>
+                    <div><img src="img/Bridge_generation/0009.gif "></div>
+                    <div><img src="img/Bridge_generation/0010.gif "></div>
+                    <div><img src="img/Bridge_generation/0011.gif "></div>
+                    <div><img src="img/Bridge_generation/0012.gif "></div>
+                    <div><img src="img/Bridge_generation/0013.gif "></div>
+                    <div><img src="img/Bridge_generation/0014.gif "></div>
+                    <div><img src="img/Bridge_generation/0015.gif "></div>
+                    <div><img src="img/Bridge_generation/0016.gif "></div>
+                    <div><img src="img/Bridge_generation/0017.gif "></div>
+                    <div><img src="img/Bridge_generation/0018.gif "></div>
+                    <div><img src="img/Bridge_generation/0019.gif "></div>
+                    <div><img src="img/Bridge_generation/0020.gif "></div>
+                    <div><img src="img/Bridge_generation/0021.gif "></div>
+                    <div><img src="img/Bridge_generation/0022.gif "></div>
+                    <div><img src="img/Bridge_generation/0023.gif "></div>
+                    <div><img src="img/Bridge_generation/0024.gif "></div>
+                    <div><img src="img/Bridge_generation/0025.gif "></div>
+                    <div><img src="img/Bridge_generation/0026.gif "></div>
+                    <div><img src="img/Bridge_generation/0027.gif "></div>
+                    <div><img src="img/Bridge_generation/0028.gif "></div>
+                    <div><img src="img/Bridge_generation/0029.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="text-center ">
+                <h4>Robot Executions</h4>
+            </div>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_apple_in_plate.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put apple in plate</div>
+                    </div>
+                </div>
+                <!-- </div>
+            <p><br /></p>
+            <div class="row align-items-center "> -->
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_banana_in_plate.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put banana in plate</div>
+                    </div>
+                </div>
+                <!-- </div>
+            <p><br /></p>
+            <div class="row align-items-center "> -->
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_peach_in_bowl.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put peach in blue bowl</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+
+
+        </div>
+
+        <!-- <div class="section">
+            <a id="mwresults"></a>
+            <h2>Meta-World Results</h2>
+            <hr>
+            <p>
+                Below, we provide some examples of executions of our Meta-World experiments. The agent is required to execute a variety of manipulation tasks.
+            </p>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/assembly/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Assembly</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/door-open/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Door Open</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/hammer/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Hammer</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/MW/shelf-place/executed_video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Shelf Place</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div> -->
+
+        <!-- <div class="section">
+            <a id="ithorresults"></a>
+            <h2>iTHOR Results</h2>
+            <hr>
+            <p>
+                Below, we provide some examples of executions of our iTHOR experiments. The agent is required to find and move to a specific target object in the scene.
+            </p>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Pillow/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Pillow</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/SoapBar/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Soap Bar</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Television/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Television</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/iTHOR/Toaster/execution_results/video.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>Toaster</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div> -->
+
+        <!-- <div class="section ">
+            <a id="realresults"></a>
+            <h2>Real-World Results</h2>
+            <hr>
+            <p>
+                Below, we provide some examples of executions of our real-world experiments. The agent is required to execute pick-and-place task on different objects and targets.
+            </p>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_apple_in_plate.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put apple in plate</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_banana_in_plate.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put banana in plate</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/Real/put_peach_in_bowl.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put peach in blue bowl</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div> -->
+
+        <!-- <div class="section ">
+            <a id="oodresults"></a>
+            <h2>Cross-Embodiment Learning from Human Videos</h2>
+            <hr>
+            <p>
+                Below, we provide some examples of executions of our OOD experiments. The agent is trained on human pushing video and tested in simulation.
+            </p>
+
+            <div class="container">
+                <div class="right">
+                    <div class="text-center">
+                        <h3>Failed executions</h3>
+                        <p><br /></p>
+                    </div>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/failed2/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                </div>
+                <div class="left">
+                    <div class="text-center">
+                        <h3>Successful executions</h3>
+                        <p><br /></p>
+                    </div>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                    <div class="row">
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/input.png " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">input image</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/plan.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">video plan</div>
+                            </div>
+                        </div>
+                        <div class="col justify-content-center text-center ">
+                            <img src="img/OOD/success2/execution.gif " width="100% ">
+                            <div class="overlay ">
+                                <div class="text ">execution</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p><br /></p>
+                </div>
+                <div class="bottom">
+                    <p><br /></p>
+                </div>
+            </div>
+
+        </div> -->
+
+        <div class="section ">
+            <a id="bridge0shot"></a>
+            <h2>Zero-Shot Generalization On Real-World Scene of Bridge Model</h2>
+            <hr>
+            <p>
+                Below, we provide some qualitative examples video diffusion model trained on Bridge and tested on real-world scene without fine-tuning. (The generated videos are blurred because the original resolution is only 48x64)
+            </p>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <img src="img/bridge_zshot/pick up banana/IMG_2115.jpg " width="100% ">
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>pick up banana</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/bridge_zshot/pick up banana/IMG_2115.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text ">generated video</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <img src="img/bridge_zshot/put lid on pot/IMG_2121.jpg " width="100% ">
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put lid on pot</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/bridge_zshot/put lid on pot/IMG_2121.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text ">generated video</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="row align-items-center ">
+                <div class="col justify-content-center text-center ">
+                    <img src="img/blank.png " width="100% ">
+                    <div class="overlay ">
+                        <div class="text "> </div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <img src="img/bridge_zshot/put pot in sink/IMG_2120.jpg " width="100% ">
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>put pot in sink</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                        <source src="img/bridge_zshot/put pot in sink/IMG_2120.mp4 " type="video/mp4 ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text ">generated video</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <img src="img/blank.png " width="100% ">
+                    <div class="overlay ">
+                        <div class="text "> </div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div>
+
+        <div class="section ">
+            <a id="vidgencomparison"></a>
+            <h2>Comparison of First-Frame Conditioning Strategy and<br>Different Text Encoders</h2>
+            <hr>
+            <!-- <p>
+                In this section, we provide a line chart to compare the performance of different text encoders and first frame conditioning strategy. <b>cat_c</b>: first frame is concatenated with noisy video in RGB dimension (Ours). <b>cat_t</b>: first
+                frame is concatenated with noisy video in time dimension. <b>CLIP</b>: CLIP text encoder (63M). <b>T5</b>: T5 base encoder (110M).
+            </p>
+            <div class="row align-items-center ">
+                <img src="img/mse_plot_final.png " width="100% ">
+            </div> -->
+            <p>
+                Below we provide some qualitative examples of different first frame conditioning strategy vs GT video. The results were generated from bridge model during mid-early stage of training (40k steps).
+            </p>
+
+            <div class="container">
+                <div class="carousel1">
+                    <div><img src="img/cat_strategy_qualitative/1.png " width="100% "></a>
+                    </div>
+                    <div><img src="img/cat_strategy_qualitative/2.png " width="100% "></a>
+                    </div>
+                    <div><img src="img/cat_strategy_qualitative/3.png " width="100% "></a>
+                    </div>
+                    <div><img src="img/cat_strategy_qualitative/4.png " width="100% "></a>
+                    </div>
+                    <div><img src="img/cat_strategy_qualitative/5.png " width="100% "></a>
+                    </div>
+                    <div><img src="img/cat_strategy_qualitative/6.png " width="100% "></a>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div>
+
+        <div class="section ">
+            <a id="DDIMresults"></a>
+            <h2>Improving Inference Efficiency with<br>Denoising Diffusion Implicit Models</h2>
+            <hr>
+            <p>
+                To empirically demonstrate the possibility of significantly improving our method’s efficiency, we have conducted an additional experiment in Meta-World that generates videos using DDIM. Instead of iterative denoising 100 steps, as reported in the main
+                paper, we have experimented with different numbers of denoising steps (e.g., 25, 10, 5, 3). We found that with DDIM we can generate high-fidelity videos with only 1/10 of the samplimg steps (10 steps).
+            </p>
+            <p>
+
+            </p>
+            <div class="overlay ">
+                <div class="text "><b>DDIM 25 steps: </b>We can see a little more temporal inconsistency (gripper/object disappeared/duplicated) than DDPM (100 steps) reported in previous section. But the generation quality is still good in general. </div>
+            </div>
+            <div class="container">
+                <div class="carousel4">
+                    <div><img src="img/DDIM_results/DDIM25/0000.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0001.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0002.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0003.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0004.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0005.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0006.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0007.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0008.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0009.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0010.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0011.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0012.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0013.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0014.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0015.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0016.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0017.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0018.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0019.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0020.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0021.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0022.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0023.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0024.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0025.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0026.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0027.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM25/0028.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="overlay ">
+                <div class="text "><b>DDIM 10 steps: </b> We think the generation quality is similar to DDIM 25 steps. </div>
+            </div>
+            <div class="container">
+                <div class="carousel4">
+                    <div><img src="img/DDIM_results/DDIM10/0000.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0001.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0002.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0003.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0004.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0005.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0006.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0007.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0008.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0009.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0010.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0011.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0012.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0013.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0014.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0015.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0016.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0017.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0018.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0019.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0020.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0021.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0022.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0023.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0024.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0025.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0026.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0027.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM10/0028.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="overlay ">
+                <div class="text "><b>DDIM 5 steps: </b> We can see that the temporal inconsistency happens more frequently in this setting. </div>
+            </div>
+            <div class="container">
+                <div class="carousel4">
+                    <div><img src="img/DDIM_results/DDIM5/0000.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0001.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0002.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0003.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0004.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0005.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0006.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0007.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0008.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0009.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0010.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0011.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0012.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0013.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0014.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0015.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0016.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0017.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0018.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0019.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0020.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0021.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0022.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0023.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0024.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0025.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0026.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0027.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM5/0028.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+            <div class="overlay ">
+                <div class="text "><b>DDIM 3 steps: </b> We start to see some blurred object (inconsistency within frame) </div>
+            </div>
+            <div class="container">
+                <div class="carousel4">
+                    <div><img src="img/DDIM_results/DDIM3/0000.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0001.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0002.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0003.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0004.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0005.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0006.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0007.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0008.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0009.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0010.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0011.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0012.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0013.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0014.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0015.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0016.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0017.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0018.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0019.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0020.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0021.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0022.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0023.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0024.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0025.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0026.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0027.gif "></div>
+                    <div><img src="img/DDIM_results/DDIM3/0028.gif "></div>
+                </div>
+            </div>
+            <p><br /></p>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script type="text/javascript">
+        $('.carousel1').slick({
+            slidesToShow: 1,
+            infinite: true,
+            dots: true,
+        });
+
+        $('.carousel3').slick({
+            slidesToShow: 3,
+            slidesToScroll: 3,
+            infinite: true,
+            dots: true,
+        });
+
+        $('.carousel4').slick({
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            infinite: true,
+            dots: true,
+        });
+
+        $('.carousel5').slick({
+            slidesToShow: 5,
+            slidesToScroll: 5,
+            infinite: true,
+            dots: true,
+        });
+    </script>
+</body>
+
+</html>
