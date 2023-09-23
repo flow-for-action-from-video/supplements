@@ -102,7 +102,8 @@
             </div>
             <hr width="75%">
             <p>
-                Below, we provide some examples of generated videos and executions of our Meta-World experiments. The agent is required to execute a variety of manipulation tasks.
+                Meta-World (<a href="https://arxiv.org/abs/1910.10897">Yu et al., 2019</a>) is a simulated benchmark featuring various manipulation tasks with a Sawyer robot arm. We present the video plans synthesized by our video diffusion model as well
+                as robot execution videos as follows.
             </p>
             <div class="text-center ">
                 <h4>Synthesized Videos</h4>
@@ -161,9 +162,6 @@
                         <div class="text "><b>Task: </b>Door Open</div>
                     </div>
                 </div>
-                <!-- </div>
-            <p><br /></p>
-            <div class="row align-items-center "> -->
                 <div class="col justify-content-center text-center ">
                     <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
                         <source src="img/MW/hammer/executed_video.mp4 " type="video/mp4 ">
@@ -190,7 +188,8 @@
             </div>
             <hr width="75%">
             <p>
-                Below, we provide some examples of generated videos and executions of our iTHOR experiments. The agent is required to find and move to a specific target object in the scene.
+                iTHOR (<a href="https://arxiv.org/abs/1712.05474">Kolve et al., 2017</a>) is a simulated benchmark for embodied common sense reasoning. We consider the object navigation tasks for evaluation, where an agent randomly initialized into a
+                scene learns to navigate to an object of a given type (e.g., toaster, television). We present the video plans synthesized by our video diffusion model as well as robot navigation videos as follows.
             </p>
             <div class="text-center ">
                 <h4>Synthesized Videos</h4>
@@ -233,7 +232,7 @@
             </div>
             <p><br /></p>
             <div class="text-center ">
-                <h4>Robot Executions</h4>
+                <h4>Robot Navigation</h4>
             </div>
             <div class="row align-items-center ">
                 <div class="col justify-content-center text-center ">
@@ -252,9 +251,6 @@
                         <div class="text "><b>Task: </b>Soap Bar</div>
                     </div>
                 </div>
-                <!-- </div>
-            <p><br /></p>
-            <div class="row align-items-center "> -->
                 <div class="col justify-content-center text-center ">
                     <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
                         <source src="img/iTHOR/Television/execution_results/video.mp4 " type="video/mp4 ">
@@ -280,7 +276,9 @@
             </div>
             <hr width="75%">
             <p>
-                Below, we provide some examples of executions of our Cross-Embodiment experiments. The agent is trained on human pushing video and tested in simulation.
+                We aim to examine if our method can achieve cross-embodiment learning, e.g., leverage <i>human</i> demonstration videos to control <i>robots</i> to solve tasks. To this end, we learn a video diffusion model from only actionless human pushing
+                videos from Visual Pusher (<a href="https://arxiv.org/abs/2011.06507">Schmeckpeper et al., 2021</a>, <a href="https://arxiv.org/abs/2106.03911">Zakka et al., 2022</a>) and then evaluate our method on simulated robot pushing tasks without
+                any fine-tuning. We present the video plans synthesized by our video diffusion model as well as robot execution videos as follows.
             </p>
             <div class="container">
                 <div class="right">
@@ -390,7 +388,8 @@
             </div>
             <hr width="75%">
             <p>
-                Below, we provide some examples of generated video trained on Bridge data and executions of our real-world experiments with the model file-tuned on human videos. The agent is required to execute pick-and-place task on different objects and targets.
+                We aim to examine if our method can tackle real-world robotics tasks. To this end, To this end, we train our video generation model on the Bridge dataset (<a href="https://arxiv.org/abs/2109.13396">Ebert et al., 2022</a>), and perform
+                evaluation on a real-world Franka Emika Panda tabletop manipulation environment. We present the video plans synthesized by our video diffusion model as well as robot execution videos as follows.
             </p>
             <div class="text-center ">
                 <h4>Synthesized Videos</h4>
@@ -442,9 +441,6 @@
                         <div class="text "><b>Task: </b>put apple in plate</div>
                     </div>
                 </div>
-                <!-- </div>
-            <p><br /></p>
-            <div class="row align-items-center "> -->
                 <div class="col justify-content-center text-center ">
                     <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
                         <source src="img/Real/put_banana_in_plate.mp4 " type="video/mp4 ">
@@ -453,9 +449,6 @@
                         <div class="text "><b>Task: </b>put banana in plate</div>
                     </div>
                 </div>
-                <!-- </div>
-            <p><br /></p>
-            <div class="row align-items-center "> -->
                 <div class="col justify-content-center text-center ">
                     <video width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
                         <source src="img/Real/put_peach_in_bowl.mp4 " type="video/mp4 ">
@@ -711,9 +704,10 @@
             <h2>Zero-Shot Generalization on Real-World Scene with Bridge Model</h2>
             <hr>
             <p>
-                Below, we provide some qualitative examples video diffusion model trained on Bridge and tested on real-world scene without fine-tuning. (The generated videos are blurred because the original resolution is only 48x64)
+                While most tasks in the Bridge data were recorded in toy kitchens, we found that the video diffusion model trained on this dataset already can generalize to complex real-world kitchen scenarios, producing reasonable videos given RGB images and textual
+                task descriptions. We present some examples of the synthesized videos below. Note that the videos are blurry since the original video resolution is low (48x64).
             </p>
-            <div class="row align-items-center ">
+            <div class="row">
                 <div class="col justify-content-center text-center ">
                     <img src="img/bridge_zshot/pick up banana/IMG_2115.jpg " width="100% ">
                     <div class="overlay ">
@@ -787,7 +781,8 @@
                 <img src="img/mse_plot_final.png " width="100% ">
             </div> -->
             <p>
-                Below we provide some qualitative examples of different first frame conditioning strategy vs GT video. The results were generated from bridge model during mid-early stage of training (40k steps).
+                We compare our proposed first-frame conditioning strategy (cat_c) with the naive frame-wise concatenate strategy (cat_t). Our method (cat_c) consistently outperforms the frame-wise concatenating baseline (cat_t) when training on the Bridge dataset. Below
+                we provide some qualitative examples of synthesized videos with 40k training steps.
             </p>
 
             <div class="container">
@@ -814,14 +809,13 @@
             <h2>Improving Inference Efficiency with<br>Denoising Diffusion Implicit Models</h2>
             <hr>
             <p>
-                To empirically demonstrate the possibility of significantly improving our method’s efficiency, we have conducted an additional experiment in Meta-World that generates videos using DDIM. Instead of iterative denoising 100 steps, as reported in the main
-                paper, we have experimented with different numbers of denoising steps (e.g., 25, 10, 5, 3). We found that with DDIM we can generate high-fidelity videos with only 1/10 of the samplimg steps (10 steps).
-            </p>
-            <p>
-
+                This section investigates the possibility of accelerating the sampling process using Denoising Diffusion Implicit Models (DDIM; <a href="https://arxiv.org/abs/2010.02502">Song et al., 2021</a>). To this end, instead of iterative denoising
+                100 steps, as reported in the main paper, we have experimented with different numbers of denoising steps (e.g., 25, 10, 5, 3) using DDIM. We found that we can generate high-fidelity videos with only 1/10 of the samplimg steps (10 steps)
+                with DDIM, allowing for tackling running time-critical tasks. We present the synthesized videos with 25, 10, 5, 3 denoising steps as follows.
             </p>
             <div class="overlay ">
-                <div class="text "><b>DDIM 25 steps: </b>We can see a little more temporal inconsistency (gripper/object disappeared/duplicated) than DDPM (100 steps) reported in previous section. But the generation quality is still good in general. </div>
+                <div class="text "><b>DDIM 25 steps: </b> The quality of the synthesized videos are satisfactory depsite minor temporal inconsistency (gripper/object disappeared/duplicated) compared to our DDPM (100 steps) videos reported in previous section.
+                </div>
             </div>
             <div class="container">
                 <div class="carousel4">
@@ -858,7 +852,8 @@
             </div>
             <p><br /></p>
             <div class="overlay ">
-                <div class="text "><b>DDIM 10 steps: </b> We think the generation quality is similar to DDIM 25 steps. </div>
+                <div class="text "><b>DDIM 10 steps: </b> The quality of the synthesized videos is similar to those generated with 25 steps.
+                </div>
             </div>
             <div class="container">
                 <div class="carousel4">
@@ -895,7 +890,8 @@
             </div>
             <p><br /></p>
             <div class="overlay ">
-                <div class="text "><b>DDIM 5 steps: </b> We can see that the temporal inconsistency happens more frequently in this setting. </div>
+                <div class="text "><b>DDIM 5 steps: </b> The temporal inconsistency issue is more severe with only 5 denoising steps.
+                </div>
             </div>
             <div class="container">
                 <div class="carousel4">
@@ -932,7 +928,8 @@
             </div>
             <p><br /></p>
             <div class="overlay ">
-                <div class="text "><b>DDIM 3 steps: </b> We start to see some blurred object (inconsistency within frame) </div>
+                <div class="text "><b>DDIM 3 steps: </b> The temporal inconsistency issue is more severe and some objects are blurry.
+                </div>
             </div>
             <div class="container">
                 <div class="carousel4">
