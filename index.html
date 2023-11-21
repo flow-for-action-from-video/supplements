@@ -66,6 +66,7 @@
                 <li><a href="#bridge0shot">Zero-Shot Generalization on Real-World Scene with Bridge Model</a></li>
                 <li><a href="#vidgencomparison">Comparison of First-Frame Conditioning Strategy and Different Text Encoders</a></li>
                 <li><a href="#DDIMresults">Improving Inference Efficiency with Denoising Diffusion Implicit Models</a></li>
+                <li><a href="#BCcommonfailuremode">Common Failure Modes of BC baselines</a></li>
             </ul>
             <p><br /></p>
         </div>
@@ -966,43 +967,139 @@
             </div>
             <p><br /></p>
         </div>
-    </div>
 
-    <!-- Javascript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    <script type="text/javascript">
-        $('.carousel1').slick({
-            slidesToShow: 1,
-            infinite: true,
-            dots: true,
-        });
+        <div class="section ">
+            <a id="BCcommonfailuremode"></a>
+            <h2>Common Failure Modes of BC baselines</h2>
+            <hr>
+            <p>
+                In this section, we provide some qualitative examples of common failure modes of the most challenging tasks for BC baselines in our Meta-World setting. The tasks include <b>shelf-place</b>, <b>basketball</b>, and <b>assembly</b>, which
+                requires the robot to grasp an object and move it to another position. The most common failure modes we observed for BC policies is that it often makes inaccurate grasps when it's still far away from the object and won't recover (retry
+                for another grasp) after that. This failure mode persists in plain BC even when 50 demonstrations per view are provided. Different from BC, the Diffusion Policy makes contact with the object consistently and thus makes successful grasps
+                more often than BC does. We also observed some re-grasp behaviors from the Diffusion Policy (see shelf-place and basketball tasks), which is not observed in BC. However, the Diffusion Policy can still fail to grasp the object because the
+                object is small in the image and can slip due to inaccurate grasps.
+            </p>
 
-        $('.carousel3').slick({
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            infinite: true,
-            dots: true,
-        });
+            <div class="text-center">
+                <h3> BC (5 demonstrations per view)</h3>
+            </div>
+            <div class="row">
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_5/shelf_place.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>shelf-place</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_5/basketball.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>basketball</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_5/assembly.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>assembly</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
 
-        $('.carousel4').slick({
-            slidesToShow: 4,
-            slidesToScroll: 4,
-            infinite: true,
-            dots: true,
-        });
+            <div class="text-center">
+                <h3> BC (50 demonstrations per view)</h3>
+            </div>
+            <div class="row">
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_50/shelf_place.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>shelf-place</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_50/basketball.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>basketball</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/BC_50/assembly.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>assembly</div>
+                    </div>
+                </div>
+            </div>
+            <p><br /></p>
 
-        $('.carousel5').slick({
-            slidesToShow: 5,
-            slidesToScroll: 5,
-            infinite: true,
-            dots: true,
-        });
-    </script>
+            <div class="text-center">
+                <h3>Diffusion Policy (5 demonstrations per view)</h3>
+            </div>
+            <div class="row">
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/Diffusion_5/shelf_place.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>shelf-place</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/Diffusion_5/basketball.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>basketball</div>
+                    </div>
+                </div>
+                <div class="col justify-content-center text-center ">
+                    <video onloadstart="this.playbackRate = 2.0;" controls src="img/BC_failure_modes/Diffusion_5/assembly.mp4" width="100% " playsinline=" " autoplay=" " loop=" " preload=" " muted=" ">
+                    </video>
+                    <div class="overlay ">
+                        <div class="text "><b>Task: </b>assembly</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Javascript -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+        <script type="text/javascript">
+            $('.carousel1').slick({
+                slidesToShow: 1,
+                infinite: true,
+                dots: true,
+            });
+
+            $('.carousel3').slick({
+                slidesToShow: 3,
+                slidesToScroll: 3,
+                infinite: true,
+                dots: true,
+            });
+
+            $('.carousel4').slick({
+                slidesToShow: 4,
+                slidesToScroll: 4,
+                infinite: true,
+                dots: true,
+            });
+
+            $('.carousel5').slick({
+                slidesToShow: 5,
+                slidesToScroll: 5,
+                infinite: true,
+                dots: true,
+            });
+        </script>
 </body>
 
 </html>
